@@ -12,7 +12,7 @@ param diagBaseName string = 'diag-{0}'
 
 resource storage 'Microsoft.Storage/storageAccounts@2022-09-01' existing = [
   for (storageAccount, index) in storageAccounts: {
-    name: last(split(storageAccounts[index].resourceId, '/'))
+    name: last(split(storageAccount.resourceId, '/'))
   }
 ]
 resource diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
@@ -20,7 +20,6 @@ resource diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-pr
     name: replace(diagBaseName, '{0}', last(split(storageAccount.resourceId, '/')))
     scope: storage[index]
     properties: {
-      logs: []
       metrics: metrics
       workspaceId: workspaceId
     }

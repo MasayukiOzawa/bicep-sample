@@ -12,7 +12,4 @@ module diag './diagSetting.bicep' = {
     storageAccounts: storage.outputs.storageAccounts
     workspaceId: logAnalytics.outputs.workspaceId
   }
-  dependsOn: [
-    storage
-  ]
 }
