@@ -14,4 +14,9 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-06-01' = [
   }
 ]
 
-output storageAccounts array = [for i in range(0, 3): storageAccount[i]]
+output storageAccounts array = [
+  for i in range(0, 3): {
+    name: storageAccount[i].name
+    id: storageAccount[i].id
+  }
+]

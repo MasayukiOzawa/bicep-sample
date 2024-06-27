@@ -10,14 +10,15 @@ param metrics array = [
 ]
 param diagBaseName string = 'diag-{0}'
 
+// ストレージアカウントの診断設定
 resource storage 'Microsoft.Storage/storageAccounts@2022-09-01' existing = [
   for (storageAccount, index) in storageAccounts: {
-    name: last(split(storageAccount.resourceId, '/'))
+    name: storageAccount.name
   }
 ]
 resource diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
   for (storageAccount, index) in storageAccounts: {
-    name: replace(diagBaseName, '{0}', last(split(storageAccount.resourceId, '/')))
+    name: replace(diagBaseName, '{0}', storageAccount.name)
     scope: storage[index]
     properties: {
       metrics: metrics
@@ -26,6 +27,7 @@ resource diagnosticSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-pr
   }
 ]
 
+// ストレージアカウントの BLOB についての診断設定
 resource blob 'Microsoft.Storage/storageAccounts/blobServices@2023-05-01' existing = [
   for (storageAccount, index) in storageAccounts: {
     name: 'default'
@@ -33,8 +35,8 @@ resource blob 'Microsoft.Storage/storageAccounts/blobServices@2023-05-01' existi
   }
 ]
 resource diagnosticBlobSettings 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = [
-  for (storageAccount, index) in storageAccounts: {
-    name: '${replace(diagBaseName, '{0}', last(split(storageAccount.resourceId, '/')))}-blob'
+  for (storageAccount, index) in storageAccounts: if (contains(storageAccount.name, 'stjb6gfh2nnkvfe0')) {
+    name: '${replace(diagBaseName, '{0}', storageAccount.name)}-blob'
     scope: blob[index]
     properties: {
       logs: blobLogSetting
