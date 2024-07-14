@@ -1,0 +1,10 @@
+#cloud-config
+packages:
+  - httpd
+runcmd:
+  - systemctl start httpd
+  - systemctl enable httpd
+  - touch /var/www/html/index.html
+  - echo $HOSTNAME > /var/www/html/index.html
+  - systemctl stop firewalld
+  - systemctl disable firewalld
